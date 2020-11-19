@@ -28,6 +28,8 @@ let API = {
     commentMV:'/comment/mv',
     topList:'/toplist',
     toplistDetail:'/toplist/detail',
+    recommendSongs:'/recommend/songs',
+    commentMusic:'/comment/music',
 }
 
 export default {

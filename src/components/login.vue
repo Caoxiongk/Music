@@ -145,6 +145,7 @@ export default class Login extends Vue {
     //跳转
     headerLoginBtn() {
         if (!this.cookie) {
+            localStorage.setItem('currentRoute',this.$router.currentRoute.fullPath)
             this.$router.push({
                 path: '/Login'
             })
@@ -164,6 +165,7 @@ export default class Login extends Vue {
             };
             this.cookie = '';
         } else {
+               localStorage.setItem('currentRoute',this.$router.currentRoute.fullPath)
             this.$router.push({
                 path: '/Login'
             })

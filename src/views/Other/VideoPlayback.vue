@@ -90,7 +90,7 @@ export default {
         this.playBtn();
         this.address();
         this.DetailInfo();
-        this.commentsBtn()
+        this.commentsBtn();
     },
 
     methods: {
@@ -131,7 +131,7 @@ export default {
                 console.log('aaaaaaaaa')
                 this.commentsArray = res.data.hotComments;
             })
-        }
+        },
     }
 }
 </script>

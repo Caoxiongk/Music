@@ -84,7 +84,7 @@ export default class MyLogin extends Vue {
                     localStorage.setItem('usernameCookie', res.data.cookie);
                     localStorage.setItem('userId', res.data.account.id)
                     this.$router.push({
-                        path: '/Other/recommended'
+                        path: localStorage.getItem('currentRoute')
                     })
                 } else {
                     this.$notify({
