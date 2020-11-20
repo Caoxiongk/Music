@@ -30,6 +30,7 @@ let API = {
     toplistDetail:'/toplist/detail',
     recommendSongs:'/recommend/songs',
     commentMusic:'/comment/music',
+    simiSong:'/simi/song',
 }
 
 export default {

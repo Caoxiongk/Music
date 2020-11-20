@@ -17,10 +17,10 @@
       </header>
     </van-sticky>
 
-    <main id="main" >
+    <main id="main">
       <ul class="SongList">
         <li v-for="(item, index) in musicList" :key="index">
-          <div class="left">
+          <div class="left" @click="MusicBtn(item)">
             <img :src="item.al.picUrl" />
             <div>
               <p>
@@ -35,7 +35,12 @@
             </div>
           </div>
           <div class="right">
-            <van-icon name="music-o" size="21" color="#999aaa" />
+            <van-icon
+              name="eye-o"
+              size="21"
+              color="#999aaa"
+              @click="details(item)"
+            />
             <van-icon
               name="ellipsis"
               size="21"
@@ -46,10 +51,15 @@
         </li>
       </ul>
     </main>
-
-    <van-popup v-model="show" position="bottom" :style="{ height: '60%'}" id="wrap">
+    <footer id="footer"><Play /></footer>
+    <van-popup
+      v-model="show"
+      position="bottom"
+      :style="{ height: '50%' }"
+      id="wrap"
+    >
       <h1 class="popupTitle">热门评论</h1>
-      <ul class="Comments" style="overflow-y: auto;" >
+      <ul class="Comments" style="overflow-y: auto;">
         <li v-for="(item, index) in CommentMusicList" :key="index">
           <img :src="item.user.avatarUrl" />
           <p>
@@ -59,6 +69,24 @@
         </li>
       </ul>
     </van-popup>
+
+    <van-popup
+      v-model="simiSongShow"
+      position="bottom"
+      :style="{ height: '60%' }"
+    >
+       <h1 class="popupTitle">相似歌曲</h1>
+       <ul class="simiSong">
+          <li v-for="(item,index) in simiSongList" :key="index">
+             <img :src="item.album.picUrl">
+             <p>
+               <span>{{item.name}}</span>
+               <span>--</span>
+               <span>{{item.artists[0].name}}</span>
+             </p>
+          </li>
+       </ul>
+    </van-popup>
   </div>
 </template>
 
@@ -66,8 +94,11 @@
 import { Component, Vue } from "vue-property-decorator";
 import topImg from "../../assets/recommended.jpg";
 import Api from "../../api/api.js";
+import Play from "../../components/Play.vue";
 @Component({
-  components: {}
+  components: {
+    Play
+  }
 })
 export default class RecommendedDaily extends Vue {
   topImg: any = topImg;
@@ -76,7 +107,9 @@ export default class RecommendedDaily extends Vue {
   CommentMusicList: Array<any> = [];
   CommentMusicIndex: number = 1;
   CommentMusicBefore: number = 0;
-  CommentMusicId:any = '';
+  CommentMusicId: any = "";
+  simiSongShow: boolean = false;
+  simiSongList:any = [];
   mounted() {
     // this.$nextTick(()=>{
     // // document.getElementById("wrap").addEventListener('scroll',this.scope);
@@ -132,47 +165,81 @@ export default class RecommendedDaily extends Vue {
   //弹出
   async PopupBtn(item: any) {
     this.show = true;
-        this.CommentMusicList = [];
+    this.CommentMusicList = [];
     this.CommentMusicId = item.id;
-    this.commentMusicBtn()
-  };
+    this.commentMusicBtn();
+  }
 
-  commentMusicBtn(){
-    (this as any).$axios.post(Api.API.commentMusic + "?id=" + this.CommentMusicId + "&&limit=" + (this.CommentMusicIndex * 20))
+  commentMusicBtn() {
+    (this as any).$axios
+      .post(
+        Api.API.commentMusic +
+          "?id=" +
+          this.CommentMusicId +
+          "&&limit=" +
+          this.CommentMusicIndex * 20
+      )
       .then((res: any) => {
         this.CommentMusicList = res.data.comments;
-        if(res.data.total >5000){
+        if (res.data.total > 5000) {
           this.CommentMusicBefore = Math.ceil(5000 / 20);
-        }else{
-           this.CommentMusicBefore = Math.ceil(res.data.total / 20)
+        } else {
+          this.CommentMusicBefore = Math.ceil(res.data.total / 20);
         }
-       
-      });5
-      setTimeout(()=>{
-        document.getElementById("wrap").addEventListener('scroll',this.scope);
-      },100)
+      });
+    5;
+    setTimeout(() => {
+      document.getElementById("wrap").addEventListener("scroll", this.scope);
+    }, 100);
   }
 
   //滚轮滚动
-   scope(){
-          console.log('as');
-            let scrollTop = document.querySelector('#wrap').scrollTop;
-            let clientHeight =document.querySelector('#wrap').clientHeight;
-            let scrollHeight = document.querySelector('#wrap').scrollHeight ;
-            // console.log(scrollTop)
-            // console.log(clientHeight)
-            // console.log(scrollHeight)
-            if((scrollTop + clientHeight) >= scrollHeight){
-              console.log(this.CommentMusicBefore);
-                this.CommentMusicIndex ++
-                console.log(this.CommentMusicIndex);
-                if(this.CommentMusicIndex <= this.CommentMusicBefore){
-                  console.log('111')
-                  this.commentMusicBtn()
-                }
+  scope() {
+    console.log("as");
+    let scrollTop = document.querySelector("#wrap").scrollTop;
+    let clientHeight = document.querySelector("#wrap").clientHeight;
+    let scrollHeight = document.querySelector("#wrap").scrollHeight;
+    // console.log(scrollTop)
+    // console.log(clientHeight)
+    // console.log(scrollHeight)
+    if (scrollTop + clientHeight >= scrollHeight) {
+      console.log(this.CommentMusicBefore);
+      this.CommentMusicIndex++;
+      console.log(this.CommentMusicIndex);
+      if (this.CommentMusicIndex <= this.CommentMusicBefore) {
+        console.log("111");
+        this.commentMusicBtn();
+      }
+    }
+  }
 
-            }
+  //播放音乐 -- 判断音乐是否有用
+  MusicBtn(item: any) {
+    (this as any).$axios
+      .post(Api.API.CheckMusic + "?id=" + item.id)
+      .then((res: any) => {
+        console.log("12123");
+        console.log(res.data);
+        if (res.data.success == true) {
+          this.$store.state.songId = item.id;
+        } else {
+          this.$toast.fail(res.data.message);
         }
+      });
+  }
+
+  //相似歌曲
+  details(item: any) {
+    this.simiSongShow = true;
+    this.simiSongList = [];
+    (this as any).$axios.post(Api.API.simiSong + "?id=" + item.id).then((res:any)=>{
+      if(res.data.code == 200){
+          this.simiSongList = res.data.songs
+      }else{
+         this.simiSongList = [];
+      }
+    })
+  }
 }
 </script>
 
@@ -266,6 +333,36 @@ export default class RecommendedDaily extends Vue {
         }
       }
     }
+  }
+.simiSong{
+  list-style: none;
+  margin-top: 2.5rem;
+  li{
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    p{
+      box-sizing: border-box;
+      padding-left: 0.5rem;
+      span:nth-child(2),span:nth-child(3){
+        color: #999aaa;
+        font-size: 0.9rem;
+      }
+      span:nth-child(2){
+        padding: 0 0.3rem;
+      }
+    }
+    img{
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+    }
+  }
+}
+  #footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
   }
 
   .van-popup {
