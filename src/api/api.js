@@ -31,6 +31,11 @@ let API = {
     recommendSongs:'/recommend/songs',
     commentMusic:'/comment/music',
     simiSong:'/simi/song',
+    historyRecommendSongs:'/history/recommend/songs',
+    mvAll:'/mv/all',
+    mvFirst:'/mv/first',
+    exclusivercmd:'/mv/exclusive/rcmd',
+    personalizedMv:'/personalized/mv',
 }
 
 export default {

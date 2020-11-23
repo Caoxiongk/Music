@@ -67,7 +67,7 @@ export default class top extends Vue {
         {
             name: '视频',
             icon: 'filter-o',
-             to:''
+             to:'/recommendedMv'
         },
         {
             name: '云村',

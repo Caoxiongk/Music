@@ -11,8 +11,10 @@
         <van-nav-bar title="" left-arrow @click-left="onClickLeft" />
         <h1>每日推荐</h1>
         <div class="playAll">
-          <van-icon name="play-circle-o" size="19" />
-          <p>播放全部</p>
+          <div>
+            <van-icon name="play-circle-o" size="19" />
+            <p>播放全部</p>
+          </div>
         </div>
       </header>
     </van-sticky>
@@ -75,17 +77,17 @@
       position="bottom"
       :style="{ height: '60%' }"
     >
-       <h1 class="popupTitle">相似歌曲</h1>
-       <ul class="simiSong">
-          <li v-for="(item,index) in simiSongList" :key="index">
-             <img :src="item.album.picUrl">
-             <p>
-               <span>{{item.name}}</span>
-               <span>--</span>
-               <span>{{item.artists[0].name}}</span>
-             </p>
-          </li>
-       </ul>
+      <h1 class="popupTitle">相似歌曲</h1>
+      <ul class="simiSong">
+        <li v-for="(item, index) in simiSongList" :key="index">
+          <img :src="item.album.picUrl" />
+          <p>
+            <span>{{ item.name }}</span>
+            <span>--</span>
+            <span>{{ item.artists[0].name }}</span>
+          </p>
+        </li>
+      </ul>
     </van-popup>
   </div>
 </template>
@@ -109,7 +111,7 @@ export default class RecommendedDaily extends Vue {
   CommentMusicBefore: number = 0;
   CommentMusicId: any = "";
   simiSongShow: boolean = false;
-  simiSongList:any = [];
+  simiSongList: any = [];
   mounted() {
     // this.$nextTick(()=>{
     // // document.getElementById("wrap").addEventListener('scroll',this.scope);
@@ -232,14 +234,17 @@ export default class RecommendedDaily extends Vue {
   details(item: any) {
     this.simiSongShow = true;
     this.simiSongList = [];
-    (this as any).$axios.post(Api.API.simiSong + "?id=" + item.id).then((res:any)=>{
-      if(res.data.code == 200){
-          this.simiSongList = res.data.songs
-      }else{
-         this.simiSongList = [];
-      }
-    })
+    (this as any).$axios
+      .post(Api.API.simiSong + "?id=" + item.id)
+      .then((res: any) => {
+        if (res.data.code == 200) {
+          this.simiSongList = res.data.songs;
+        } else {
+          this.simiSongList = [];
+        }
+      });
   }
+
 }
 </script>
 
@@ -267,6 +272,7 @@ export default class RecommendedDaily extends Vue {
       background: white;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 0.5rem;
       position: absolute;
       bottom: 0;
@@ -276,6 +282,16 @@ export default class RecommendedDaily extends Vue {
       box-sizing: border-box;
       p {
         padding: 0 0.5rem;
+      }
+      div {
+        display: flex;
+      }
+      .history {
+        padding: 0.2rem 0.5rem;
+        border-radius: 15px;
+        font-size: 8px;
+        background: rgba(72, 72, 85, 0.6);
+        color: white;
       }
     }
   }
@@ -334,31 +350,32 @@ export default class RecommendedDaily extends Vue {
       }
     }
   }
-.simiSong{
-  list-style: none;
-  margin-top: 2.5rem;
-  li{
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    p{
-      box-sizing: border-box;
-      padding-left: 0.5rem;
-      span:nth-child(2),span:nth-child(3){
-        color: #999aaa;
-        font-size: 0.9rem;
+  .simiSong {
+    list-style: none;
+    margin-top: 2.5rem;
+    li {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      p {
+        box-sizing: border-box;
+        padding-left: 0.5rem;
+        span:nth-child(2),
+        span:nth-child(3) {
+          color: #999aaa;
+          font-size: 0.9rem;
+        }
+        span:nth-child(2) {
+          padding: 0 0.3rem;
+        }
       }
-      span:nth-child(2){
-        padding: 0 0.3rem;
+      img {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
       }
-    }
-    img{
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 50%;
     }
   }
-}
   #footer {
     position: fixed;
     width: 100%;
@@ -424,6 +441,13 @@ export default class RecommendedDaily extends Vue {
   .van-icon-arrow-left {
     font-size: 1.4rem;
     color: white;
+  }
+
+  .HistoryPopup {
+    .van-picker__cancel,
+    .van-picker__confirm {
+      font-size: 16px;
+    }
   }
 }
 </style>

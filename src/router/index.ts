@@ -10,6 +10,7 @@ import test from '../views/Other/test.vue';
 import VideoPlayback from '../views/Other/VideoPlayback.vue';
 import rankingList from '../views/Other/rankingList.vue';
 import RecommendedDaily from '../views/Other/RecommendedDaily.vue';
+import recommendedMv from '../views/Other/recommendedMv.vue';
 Vue.use(VueRouter);
 
 const routes: RouteConfig[] = [
@@ -31,6 +32,11 @@ const routes: RouteConfig[] = [
     path:'/Login',
     name:'Login',
     component: Login,
+   },
+   {
+    path:'/recommendedMv',
+    name:'recommendedMv',
+    component: recommendedMv,
    },
    {
     path:'/DetailsSinger',
